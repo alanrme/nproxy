@@ -1,0 +1,137 @@
+<!--
+    nproxy is open source
+    https://github.com/XilogOfficial/nproxy
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>nproxy</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="description" content="nproxy">
+    <meta name="keywords" content="nproxy, reverse, proxy, free">
+    <meta name="author" content="Alan Ray D'sousa">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#2e2290"/>
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="nproxy">
+    <meta property="og:title" content="nproxy">
+    <meta property="og:type" content="profile">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <script
+        src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+        crossorigin="anonymous"></script>
+    <script defer src="/js/main.js" async></script>
+
+    <script defer src="https://kit.fontawesome.com/926dde123c.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!--
+        Turning off because I don't use it
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111410202-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-111410202-1');
+        </script>
+    -->
+</head>
+
+
+<body class="parallax">
+    <nav class="hero-on">
+    <a id="navlogo" href="/">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+            <defs>
+                <style>
+                    .cls-2{stroke-miterlimit:10;stroke-width:50px;}
+                </style>
+            </defs>
+            <path class="cls-2" d="M768,457.83c0-141.38-114.62-256-256-256s-256,114.62-256,256a254.83,254.83,0,0,0,40,137.46V457.83a216,216,0,1,1,432,0V595.29A254.83,254.83,0,0,0,768,457.83Z"/>
+            <polygon class="cls-2" points="296 457.83 296 730.47 276 710.47 256 730.47 256 457.83 296 457.83"/>
+            <polygon class="cls-2" points="768 801.33 768 457.83 728 457.83 728 595.29 728 822.17 768 801.33"/>
+        </svg>
+        nproxy
+    </a>
+    <a href="login.html">Login/Sign up</a>
+    <a id="donate" href="https://ko-fi.com/xilog">
+        <i class="fas fa-hand-holding-usd fa-flip-horizontal"></i>
+        <span class="text">Donate</span>
+    </a>
+
+    <div class="menu" style="display: none; color: white"><i class="fas fa-bars"></i></div>
+</nav>
+
+    <div class="hero" id="top">
+        <h1 id="nproxyheader"> nproxy </h1>
+    </div>
+
+    
+    <div class="content"> 
+        <h2 id="what">What?</h2>
+<p>nproxy is a reverse proxy service that’s intended to bypass ISP restrictions stopping you from hosting on port 80 or 443.</p>
+
+<h2 id="hows-it-work">How’s it work?</h2>
+<p>You can specify the host IP, and we’ll forward that site to a subdomain on our domain (like myawesomeballinwebsite.nproxy.org) at port 80.</p>
+
+<h2 id="whats-it-cost">What’s it cost?</h2>
+<p>Free for one proxy per user. Paid plans for more proxies coming soon.</p>
+
+    </div>
+
+    <div class="footer">
+    <p3>
+        Copyright &copy; <a id="trigger">Alan Ray D'souza</a> 2021
+        <br>
+        <a href="privacy.html">Privacy Policy</a>
+    </p3>
+</div>
+    
+    <!-- MODALS BELOW -->
+    <a href="#top"></a><div class="scrollup">
+        <i class="fa fa-chevron-up" style="font-size: 2em; color: white"></i>
+    </div></a>
+    
+    <div class="modal" id="loader-bg">
+        <p3>Loader stuck? Disable jQuery blocking.</p3>
+        <div id="loader">
+            <svg id="loader-n" data-name="Layer 1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path class="cls-2" d="M768,612c0-141.38-114.62-256-256-256S256,470.62,256,612a254.83,254.83,0,0,0,40,137.46V612a216,216,0,1,1,432,0V749.46A254.83,254.83,0,0,0,768,612Z"/>
+                <polygon class="cls-2" points="296 612 296 884.64 276 864.64 256 884.64 256 612 296 612"/>
+                <polygon class="cls-2" points="768 955.5 768 612 728 612 728 749.46 728 976.34 768 955.5"/>
+            </svg>
+            <svg id="loader-o" data-name="Layer 1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path class="cls-1" d="M512,40A472.13,472.13,0,0,1,695.71,946.92,472.13,472.13,0,0,1,328.29,77.08,468.83,468.83,0,0,1,512,40m0-40C229.23,0,0,229.23,0,512s229.23,512,512,512,512-229.23,512-512S794.77,0,512,0Z"/>
+            </svg>
+        </div>
+    </div>
+    
+    <div class="modal" id="menu-bg" style="display: none">
+        <div id="menu">
+            <a class="m-close"><i class="fas fa-times"></i> Close</a>
+        </div>
+    </div>
+
+    <!-- if JS off -->
+    <noscript>
+        <div style="background-color: #fff; z-index: 9999999999999999999999999; position: absolute; left:0;top:0">
+            <h1>
+                You should enable JavaScript! This website relies on it.
+            </h1>
+        </div>
+
+    </noscript>
+</body>
+
+</html>

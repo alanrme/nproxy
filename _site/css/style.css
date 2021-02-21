@@ -1,0 +1,116 @@
+/* SASS VARIABLES */
+/* Fonts */
+html { font-size: 13px; }
+
+@media screen and (min-width: 800px) { html { font-size: 15px; } }
+
+@media screen and (min-width: 1200px) { html { font-size: 17px; } }
+
+@media screen and (min-width: 1600px) { html { font-size: 20px; } }
+
+@media screen and (min-width: 2000px) { html { font-size: 24px; } }
+
+@media only screen and (max-width: 640px) { .section { padding-left: 2vw !important; padding-right: 2vw !important; } #loader { width: 40% !important; } nav a { display: none !important; } nav .menu { display: inline-block !important; } }
+
+body { background: black; color: white; margin: 0; padding: 0; width: auto; overflow-x: hidden; }
+
+h1 { font-family: "Montserrat", "Helvetica", "Arial"; font-size: 4em; font-weight: 500; text-align: center; }
+
+h2 { font-family: "Montserrat", "Helvetica", "Arial"; font-size: 2.2em; font-weight: 500; margin-bottom: 0; }
+
+h3 { font-family: "Montserrat", "Helvetica", "Arial"; font-size: 1.8em; font-weight: 300; margin-bottom: 0; }
+
+h4 { font-family: "Montserrat", "Helvetica", "Arial"; font-size: 2em; font-weight: 300; margin-bottom: 0; }
+
+p { font-family: "Montserrat", "Helvetica", "Arial"; font-size: 1.5em; }
+
+p2 { font-family: "Montserrat", "Helvetica", "Arial"; font-size: 1.3em; }
+
+p3 { font-family: "Montserrat", "Helvetica", "Arial"; font-size: 1.1em; }
+
+.hero { height: 50vh; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #2e2290; }
+
+.content { padding-left: 5vw; padding-right: 5vw; padding-top: 2em; padding-bottom: 2em; min-height: 100vh; }
+
+.footer { height: auto; width: auto; background: #111; padding: 3vw; padding-top: 40px; padding-bottom: 40px; text-align: center; transition: background-color 0.5s; }
+
+/* target nav bar */
+nav { z-index: 999; width: 100%; height: auto; text-align: center; background: rgba(0, 0, 0, 0.35); /* target tab */ /* target nav logo */ /* menu button for mobile */ }
+
+nav.hero-on { position: absolute; }
+
+nav a { display: inline-block; min-height: 2em; color: white; background: rgba(255, 255, 255, 0); font-family: "Montserrat", "Helvetica", "Arial"; font-size: 1.5rem; padding: 5px 15px; text-decoration: none; -webkit-transition: 0.5s; transition: 0.5s; }
+
+nav a:hover { background: rgba(255, 255, 255, 0.2); color: white; text-decoration: none; -webkit-transition: 0.5s; transition: 0.5s; }
+
+nav a#donate { /*donate button*/ float: right; }
+
+nav a#donate i { /*fontawesome icon*/ opacity: 0.5; transition: 0.5s opacity; }
+
+nav a#donate .text { /*donate button text hidden until hover*/ /*spans won't transform unless they're turned into a block*/ display: inline-block; width: 0; transform: scaleX(0); transition: 0.5s; transition-property: transform, width; }
+
+nav a#donate:hover i { opacity: 1; transition: 0.5s opacity; }
+
+nav a#donate:hover .text { width: 3.5em; transform: scaleX(1); transition: 0.5s; transition-property: transform, width; }
+
+nav #navlogo { color: white !important; font-family: "Montserrat Medium", "Montserrat", "Helvetica", "Arial"; font-size: 1.5rem; }
+
+nav #navlogo svg { fill: white; stroke: white; height: 1.5em; width: auto; }
+
+nav .menu { height: auto; max-height: 3em; width: 100%; background: rgba(255, 255, 255, 0); font-size: 3rem; -webkit-transition: 0.5s; transition: 0.5s; }
+
+/* the fixed nav bar for when the user scrolls */
+nav.scrolled { position: fixed; background: linear-gradient(120deg, #1ec1c7, #4e44b0); background-size: 200% 200%; transform: translateY(-100%); -webkit-animation: animatedgradient 10s ease infinite; -moz-animation: animatedgradient 10s ease infinite; animation: animatedgradient 10s ease infinite; }
+
+nav.sleep { transition: transform 0.5s; }
+
+nav.awake { transform: translateY(0); transition: transform 0.5s; }
+
+#menu-bg { pointer-events: auto; flex-direction: column; flex-wrap: wrap; justify-content: center; align-items: center; /* target mobile menu */ }
+
+#menu-bg #menu { position: absolute; width: 80%; height: auto; /* target tab */ /* target menu logo */ }
+
+#menu-bg #menu a { display: block; min-height: 2em; background: transparent; color: white !important; font-family: "Montserrat", "Helvetica", "Arial"; font-size: 1.5rem; padding: 5px; text-decoration: none !important; -webkit-transition: 0.5s; transition: 0.5s; }
+
+#menu-bg #menu #navlogo { color: white !important; font-family: "Montserrat Medium", "Montserrat", "Helvetica", "Arial"; font-size: 1.5rem; }
+
+#menu-bg #menu #navlogo svg { fill: white; height: 1.5em; width: auto; }
+
+.scrollup { position: fixed; display: none; bottom: 5%; right: 5%; border-radius: 0.5em; padding: 0.5em 0.6em; z-index: 999; cursor: pointer; background: rgba(0, 0, 0, 0.3); transition: background 0.5s; }
+
+.scrollup:hover { background: rgba(0, 0, 0, 0.5); transition: background 0.5s; }
+
+.modal { display: none; position: fixed; font-size: 0.75rem; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; /*pointer-events: none;*/ background: rgba(0, 0, 0, 0.7); }
+
+#loader-bg { z-index: 99999; display: flex; flex-direction: column; flex-wrap: wrap; justify-content: center; align-items: center; }
+
+#loader-bg p3 { color: white; position: absolute; opacity: 0; bottom: 1em; /*play a fade in animation once after a delay*/ animation: 0.5s 1 fadein; animation-fill-mode: forwards; animation-delay: 3s; }
+
+#loader-bg #loader { fill: white; }
+
+#loader-bg #loader svg { height: 30vh; }
+
+#loader-bg #loader svg#loader-o { margin-left: -30vh; }
+
+@-webkit-keyframes fadein { from { opacity: 0; }
+  to { opacity: 1; } }
+
+@-moz-keyframes fadein { from { opacity: 0; }
+  to { opacity: 1; } }
+
+@keyframes fadein { from { opacity: 0; }
+  to { opacity: 1; } }
+
+button, a.button, input[type="button"] { background: #222; color: white; -webkit-border-radius: 0px; border-radius: 0px; display: inline-block; cursor: pointer; font-family: "Montserrat", "Helvetica", "Arial"; font-size: 1.5rem; padding: 4px 14px; text-decoration: none; border: 0; outline: 1px solid transparent; outline-offset: 2px; transition: 0.3s; }
+
+button:hover, a.button:hover, input[type="button"]:hover { outline: 1px solid white; transition: 0.3s; }
+
+button:active, a.button:active, input[type="button"]:active { position: relative; top: 2px; }
+
+input[type="text"], input[type="password"], input[type="email"], input[type="number"], textarea { display: block; -webkit-box-sizing: content-box; box-sizing: content-box; padding: 0.3em 0.6em; margin: 0 0 0.3em 0; border: 2px solid #fff; text-overflow: clip; background: #222; color: white; width: 100%; max-width: 20em; -webkit-transition: 0.5s; transition: 0.5s; }
+
+input[type="text"]:hover, input[type="password"]:hover, input[type="email"]:hover, input[type="number"]:hover, textarea:hover { border-color: #256ef7; transition: 0.5s; }
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="number"]:focus, textarea:focus { border-color: #2e2290; }
+
+/*# sourceMappingURL=style.css.map */

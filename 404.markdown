@@ -1,0 +1,7 @@
+---
+permalink: /404.html
+layout: default
+hero: true
+---
+
+Dead end.
