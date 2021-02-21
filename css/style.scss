@@ -278,6 +278,26 @@ nav.awake {
 
 
 
+div#error-box {
+    display: none;
+    background: red;
+    color: white;
+    font-weight: 500;
+    padding: 0.5em 1em;
+    margin: 1em 0;
+    opacity: 0;
+    transition: opacity 0.4s;
+    &.show {
+        display: block;
+        opacity: 1;
+        transition: opacity 0.4s;
+    }
+}
+
+
+
+
+
 .scrollup {
 	position: fixed;
 	display: none;
@@ -312,8 +332,6 @@ nav.awake {
 	/*pointer-events: none;*/
 	background: rgba(0, 0, 0, 0.7);
 }
-
-
 
 
 
@@ -400,14 +418,18 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
     color: white;
     width: 100%;
     max-width: 20em;
-    -webkit-transition: 0.5s;
-    transition: 0.5s;
+    transition: 0.3s;
 
     &:hover {
         border-color: #256ef7;
-        transition: 0.5s
+        transition: 0.3s
     }
     &:focus {
         border-color: #2e2290;
+    }
+
+    &.error {
+        border-color: red;
+        transition: 0.3s
     }
 }

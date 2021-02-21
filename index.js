@@ -6,7 +6,6 @@ var passport = require('passport');
 var request = require('request');
 const bcrypt = require('bcrypt')
 const uuidv4 = require('uuid/v4');
-const LocalStrategy = require('passport-local').Strategy;
 const fs = require('fs')
 const config = require('./config')
 
@@ -14,8 +13,8 @@ const config = require('./config')
 // Postgres
 const { Pool, Client } = require('pg')
 const pool = new Pool({ // create new pool
-    user: config.user,
-    host: config.host,
+    user: config.db.user,
+    host: config.db.host,
     database: config.db.name,
     password: config.db.password,
     port: process.env.PGPORT,
@@ -32,7 +31,7 @@ pool.on('error', (err, client) => {
 // callback/checkout a client
 pool.connect((err, client, done) => {
     if (err) throw err
-    client.query('SELECT * FROM users WHERE id = $1', [1], (err, res) => {
+    client.query('SELECT * FROM users WHERE email = $1', ["alanrd772@gmail.com"], (err, res) => {
         done()
         if (err) {
             console.log(err.stack)
@@ -41,6 +40,21 @@ pool.connect((err, client, done) => {
         }
     })
 })
+
+
+const LocalStrategy = require('passport-local').Strategy;
+passport.use(new LocalStrategy(function(username, password, done) {
+    client.query(`SELECT * FROM users WHERE email=$1`, [username], function(err, user) {
+        if (err) { return done(err); }
+        if (!user) {
+            return done(null, false, { message: 'Incorrect username' });
+        }
+        if (!user.validPassword(bcrypt.hash(password, 5))) {
+            return done(null, false, { message: 'Incorrect password' });
+        }
+        return done(null, user);
+    });
+}));
 
 
 // generate site with Jekyll
@@ -68,7 +82,6 @@ app.use('/img', express.static(publicdir + '/img'));
 app.use('/js', express.static(publicdir + '/js'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/auth', require('./auth'))
 
 
 app.get('/', function(req, res){
@@ -79,25 +92,25 @@ app.post('/join', async function (req, res, next) {
     try{
         const client = await pool.connect()
         await client.query('BEGIN')
-        if (req.body.password.length < 8) next(new Error('Password too short!'))
+        if (req.body.password.length < 8) return next(new Error('Password too short'))
         var pwd = await bcrypt.hash(req.body.password, 5);
-        await JSON.stringify(client.query(`SELECT id FROM 'users' WHERE 'email'=$1`, [req.body.username], function(err, result) {
+        await client.query(`SELECT * FROM users WHERE email=$1`, [req.body.username], function(err, result) {
             if(result.rows[0]){
                 next(new Error('User already registered'))
-            }
-            else{
-                client.query(`INSERT INTO users (email, password) VALUES ($1, $2, $3)`, [uuidv4(), req.body.username, pwd], function(err, result) {
-                    if(err){console.log(err);}
+            } else {
+                if (req.body.username.trim() == '' || !req.body.username.includes("@"))
+                return next(new Error('Invalid Email'));
+                
+                client.query(`INSERT INTO users (email, password) VALUES ($1, $2)`, [req.body.username, pwd], function(err, result) {
+                    if(err){ console.log(err); }
                     else {
-                        client.query('COMMIT')
-                        console.log(result)
-                        res.json({ message: "Created." })
-                        res.redirect('/login');
+                        client.query('COMMIT');
+                        res.json({ message: "Created" });
                         return;
                     }
                 });   
             }
-        }));
+        });
         client.release();
     } 
     catch(e){throw(e)}
@@ -139,6 +152,7 @@ app.get('/logout', function(req, res){
 
 // error handler
 app.use(function(err, req, res, next) {
+    console.log(err.message)
     res.status(err.status || 500)
     res.json({
         message: err.message,
