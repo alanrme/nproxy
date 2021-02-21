@@ -23,12 +23,7 @@ $('#login').on('click', function () {
             body: JSON.stringify({ username: user, password: password }),
             headers: { 'Content-Type': 'application/json' }
         }
-    ).then(function(response) {
-        response.text().then(function(json) {
-            console.log(json)
-            if (response.status >= 500) showError(JSON.parse(json).message)
-        });
-    });
+    )
 })
 
 $('input').change(function(){

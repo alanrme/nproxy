@@ -4,10 +4,9 @@ const port = 80;
 var passport = require('passport');
 const bcrypt = require('bcrypt')
 const fs = require('fs')
-const connectEnsureLogin = require('connect-ensure-login');
+var session = require('express-session');
 
 const config = require('./config')
-
 
 // Postgres
 const { Pool, Client } = require('pg')
@@ -41,39 +40,8 @@ pool.connect((err, client, done) => {
 })
 
 
-const LocalStrategy = require('passport-local').Strategy;
-passport.use(new LocalStrategy(async function(username, password, done) {
-    const client = await pool.connect()
-    await client.query('BEGIN')
-    client.query(`SELECT * FROM users WHERE email=$1`, [username], async function(err, result) {
-        user = result.rows[0]
-        if (err) { return done(err); }
-        if (!user) {
-            return done(null, false, { message: 'Incorrect username' });
-        }
-        bcrypt.compare(password, user.password, function(err, res) {
-            console.log(res)
-            if (res) {
-                return done(null, user)
-            } else {
-                return done(null, false, { message: 'Incorrect password' });
-            }
-        });
-    });
-}));
-
-passport.serializeUser(function(user, done) {
-    done(null, user.email);
-});
-
-passport.deserializeUser(function(id, done) {
-    client.query(`SELECT * FROM users WHERE email=$1`, [username], async function(err, result) {
-        user = result.rows[0]
-        done(null, user);
-    }).catch(function(err) {
-        done(err, null);
-    });
-});
+const initializePassport = require('./passport')
+initializePassport(passport)
 
 
 // generate site with Jekyll
@@ -101,6 +69,11 @@ app.use('/img', express.static(publicdir + '/img'));
 app.use('/js', express.static(publicdir + '/js'));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(session({
+    secret: config.secret,
+    resave: false,
+    saveUninitialized: true
+}));
 
 
 app.get('/', function(req, res){
@@ -135,19 +108,22 @@ app.post('/join', async function (req, res, next) {
     catch(e){throw(e)}
 });
 
-app.get('/account', passport.authenticate('local', { failureRedirect: '/login' }), function (req, res, next) {
-    res.send('')
-});
-
-app.get('/login', function (req, res, next) {
-    if (req.isAuthenticated()) {
-        res.redirect('/account');
+app.get('/account', function (req, res, next) {
+    if(!req.user) {
+        res.redirect('/login');
     }
 });
 
-app.post('/authenticate', passport.authenticate('local'), (req, res) => {
-    const { user } = req
-    res.json(user)
+app.get('/login', function (req, res, next) {
+    
+});
+
+app.post('/authenticate', passport.authenticate('local', {
+    successRedirect: "/account",
+    failureRedirect: "/login",
+    failureFlash: false
+}), (req, res, next) => {
+    
 })
 
 app.get('/logout', function(req, res){
