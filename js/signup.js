@@ -17,7 +17,7 @@ $('#signup').on('click', function () {
 $('#login').on('click', function () {
     user = $('#username').val()
     password = $('#password').val()
-    fetch('/login',
+    fetch('/authenticate',
         {
             method: 'POST',
             body: JSON.stringify({ username: user, password: password }),
@@ -25,7 +25,7 @@ $('#login').on('click', function () {
         }
     ).then(function(response) {
         response.text().then(function(json) {
-            alert(json)
+            console.log(json)
             if (response.status >= 500) showError(JSON.parse(json).message)
         });
     });
@@ -37,9 +37,10 @@ $('input').change(function(){
 });
 
 function showError(msg) {
-    msg = msg.toLowerCase();
     $('#error-box').html(msg).addClass('show');
-    box = $("#password")
-    if (msg.includes("user") || msg.includes("email")) box = $("#username")
-    box.addClass('error')
+    msg = msg.toLowerCase();
+    input = null
+    if (msg.includes("password")) input = $("#password")
+    else if (msg.includes("user") || msg.includes("email")) input = $("#username")
+    if (input) input.addClass('error')
 }

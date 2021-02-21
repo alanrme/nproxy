@@ -1,12 +1,11 @@
 const express = require('express');
-const bodyParser = require("body-parser");
 const app = express();
 const port = 80;
 var passport = require('passport');
-var request = require('request');
 const bcrypt = require('bcrypt')
-const uuidv4 = require('uuid/v4');
 const fs = require('fs')
+const connectEnsureLogin = require('connect-ensure-login');
+
 const config = require('./config')
 
 
@@ -43,18 +42,38 @@ pool.connect((err, client, done) => {
 
 
 const LocalStrategy = require('passport-local').Strategy;
-passport.use(new LocalStrategy(function(username, password, done) {
-    client.query(`SELECT * FROM users WHERE email=$1`, [username], function(err, user) {
+passport.use(new LocalStrategy(async function(username, password, done) {
+    const client = await pool.connect()
+    await client.query('BEGIN')
+    client.query(`SELECT * FROM users WHERE email=$1`, [username], async function(err, result) {
+        user = result.rows[0]
         if (err) { return done(err); }
         if (!user) {
             return done(null, false, { message: 'Incorrect username' });
         }
-        if (!user.validPassword(bcrypt.hash(password, 5))) {
-            return done(null, false, { message: 'Incorrect password' });
-        }
-        return done(null, user);
+        bcrypt.compare(password, user.password, function(err, res) {
+            console.log(res)
+            if (res) {
+                return done(null, user)
+            } else {
+                return done(null, false, { message: 'Incorrect password' });
+            }
+        });
     });
 }));
+
+passport.serializeUser(function(user, done) {
+    done(null, user.email);
+});
+
+passport.deserializeUser(function(id, done) {
+    client.query(`SELECT * FROM users WHERE email=$1`, [username], async function(err, result) {
+        user = result.rows[0]
+        done(null, user);
+    }).catch(function(err) {
+        done(err, null);
+    });
+});
 
 
 // generate site with Jekyll
@@ -80,8 +99,8 @@ app.use(express.static(publicdir));
 app.use('/css', express.static(publicdir + '/css'));
 app.use('/img', express.static(publicdir + '/img'));
 app.use('/js', express.static(publicdir + '/js'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 app.get('/', function(req, res){
@@ -116,10 +135,8 @@ app.post('/join', async function (req, res, next) {
     catch(e){throw(e)}
 });
 
-app.get('/account', function (req, res, next) {
-    if(!req.isAuthenticated()) {
-        res.redirect('/login');
-    }
+app.get('/account', passport.authenticate('local', { failureRedirect: '/login' }), function (req, res, next) {
+    res.send('')
 });
 
 app.get('/login', function (req, res, next) {
@@ -128,18 +145,10 @@ app.get('/login', function (req, res, next) {
     }
 });
 
-app.post('/login', passport.authenticate('local', {
-    successRedirect: '/account',
-    failureRedirect: '/login',
-    failureFlash: true
-}), function(req, res) {
-    if (req.body.remember) {
-        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // Cookie expires after 30 days
-    } else {
-        req.session.cookie.expires = false; // Cookie expires at end of session
-    }
-    res.redirect('/');
-});
+app.post('/authenticate', passport.authenticate('local'), (req, res) => {
+    const { user } = req
+    res.json(user)
+})
 
 app.get('/logout', function(req, res){
     console.log(req.isAuthenticated());
