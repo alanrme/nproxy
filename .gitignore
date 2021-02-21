@@ -1,3 +1,11 @@
+# Nproxy
+config.js
+
+# Jekyll
+.jekyll-cache/
+_site/
+Gemfile.lock
+
 # Logs
 logs
 *.log

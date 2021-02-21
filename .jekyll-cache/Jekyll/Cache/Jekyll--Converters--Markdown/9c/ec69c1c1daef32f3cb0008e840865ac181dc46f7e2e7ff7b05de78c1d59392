@@ -1,9 +1,0 @@
-I"�<h2 id="what">What?</h2>
-<p>nproxy is a reverse proxy service that’s intended to bypass ISP restrictions stopping you from hosting on port 80 or 443.</p>
-
-<h2 id="hows-it-work">How’s it work?</h2>
-<p>You can specify the host IP, and we’ll forward that site to a subdomain on our domain (like myawesomeballinwebsite.nproxy.org) at port 80.</p>
-
-<h2 id="whats-it-cost">What’s it cost?</h2>
-<p>Free for one proxy per user. Paid plans for more proxies coming soon.</p>
-:ET

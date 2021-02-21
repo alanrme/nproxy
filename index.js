@@ -8,17 +8,40 @@ const bcrypt = require('bcrypt')
 const uuidv4 = require('uuid/v4');
 const LocalStrategy = require('passport-local').Strategy;
 const fs = require('fs')
+const config = require('./config')
+
 
 // Postgres
 const { Pool, Client } = require('pg')
-const pool = new Pool({
-    user: process.env.PGUSER,
-    host: process.env.PGHOST,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
+const pool = new Pool({ // create new pool
+    user: config.user,
+    host: config.host,
+    database: config.db.name,
+    password: config.db.password,
     port: process.env.PGPORT,
-    ssl: true
+    ssl: false // require ssl connection to pg?
 });
+
+// will emit error on behalf of idle clients
+// says whether a backend error or network partition happens
+pool.on('error', (err, client) => {
+    console.error('Unexpected error on idle client', err)
+    process.exit(-1)
+})
+
+// callback/checkout a client
+pool.connect((err, client, done) => {
+    if (err) throw err
+    client.query('SELECT * FROM users WHERE id = $1', [1], (err, res) => {
+        done()
+        if (err) {
+            console.log(err.stack)
+        } else {
+            console.log(res.rows[0])
+        }
+    })
+})
+
 
 // generate site with Jekyll
 console.log('Generating website')
@@ -53,7 +76,6 @@ app.get('/', function(req, res){
 });
 
 app.post('/join', async function (req, res, next) {
-    console.log("someone tryig to join ?")
     try{
         const client = await pool.connect()
         await client.query('BEGIN')
