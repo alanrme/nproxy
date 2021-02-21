@@ -23,7 +23,18 @@ $('#login').on('click', function () {
             body: JSON.stringify({ username: user, password: password }),
             headers: { 'Content-Type': 'application/json' }
         }
-    )
+    ).then(function(response) {
+        // if response is a redirect then change the browser url
+        // cuz for some reason this thing doesn't follow redirect
+        // responses by default
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+        response.text().then(function(json) {
+            console.log(json)
+            if (response.status >= 500) showError(JSON.parse(json).message)
+        });
+    });
 })
 
 $('input').change(function(){

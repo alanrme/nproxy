@@ -39,6 +39,8 @@ pool.connect((err, client, done) => {
     })
 })
 
+module.exports = { pool };
+
 
 const initializePassport = require('./passport')
 initializePassport(passport)
@@ -63,24 +65,26 @@ app.use(function(req, res, next) { // makes urls not need .html at the end
         });
     } else next();
 });
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(publicdir));
 app.use('/css', express.static(publicdir + '/css'));
 app.use('/img', express.static(publicdir + '/img'));
 app.use('/js', express.static(publicdir + '/js'));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(session({
     secret: config.secret,
     resave: false,
     saveUninitialized: true
-}));
+})); // put above passport things cuz it breaks if it's not??
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 app.get('/', function(req, res){
     res.send('');
 });
 
-app.post('/join', async function (req, res, next) {
+app.post('/join', checkAuth, async function (req, res, next) {
     try{
         const client = await pool.connect()
         await client.query('BEGIN')
@@ -108,29 +112,23 @@ app.post('/join', async function (req, res, next) {
     catch(e){throw(e)}
 });
 
-app.get('/account', function (req, res, next) {
-    if(!req.user) {
-        res.redirect('/login');
-    }
+app.get('/account', checkNotAuth, function (req, res, next) {
+    res.render("account")
 });
 
-app.get('/login', function (req, res, next) {
-    
+app.get('/login', checkAuth, function (req, res, next) {
+    res.render("login")
 });
 
 app.post('/authenticate', passport.authenticate('local', {
     successRedirect: "/account",
-    failureRedirect: "/login",
-    failureFlash: false
+    failureRedirect: "/login"
 }), (req, res, next) => {
-    
+    console.log(req.body.username)
 })
 
 app.get('/logout', function(req, res){
-    console.log(req.isAuthenticated());
-    req.logout();
-    console.log(req.isAuthenticated());
-    res.json({ message: "Logged out." })
+    req.logOut();
     res.redirect('/');
 });
 
@@ -144,6 +142,23 @@ app.use(function(err, req, res, next) {
         error: req.app.get('env') == 'development' ? err : {}
     })
 })
+
+
+function checkNotAuth(req, res, next) {
+    if(req.isAuthenticated()) {
+        return next();
+    }
+    console.log("User not logged in, redirecting")
+    res.redirect('/login');
+}
+function checkAuth(req, res, next) {
+    if(req.isAuthenticated()) {
+        console.log("User already logged in, redirecting")
+        res.redirect('/account');
+    }
+    return next();
+}
+
 
 app.listen(port);
 console.log(`Listening on port ${port}`)
