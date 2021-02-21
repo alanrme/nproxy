@@ -80,6 +80,24 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+function checkNotAuth(req, res, next) {
+    if(req.user) {
+        console.log("User logged in")
+        return next();
+    }
+    console.log("User not logged in, redirecting")
+    res.redirect('/login');
+}
+function checkAuth(req, res, next) {
+    if(req.user) {
+        console.log("User already logged in, redirecting")
+        res.redirect('/account');
+    }
+    console.log("User logged in")
+    return next();
+}
+
+
 app.get('/', function(req, res){
     res.send('');
 });
@@ -108,16 +126,15 @@ app.post('/join', checkAuth, async function (req, res, next) {
             }
         });
         client.release();
-    } 
-    catch(e){throw(e)}
+    } catch(e){throw(e)}
 });
 
 app.get('/account', checkNotAuth, function (req, res, next) {
-    res.render("account")
+    res.render("account.html")
 });
 
 app.get('/login', checkAuth, function (req, res, next) {
-    res.render("login")
+    res.render("login.html")
 });
 
 app.post('/authenticate', passport.authenticate('local', {
@@ -142,22 +159,6 @@ app.use(function(err, req, res, next) {
         error: req.app.get('env') == 'development' ? err : {}
     })
 })
-
-
-function checkNotAuth(req, res, next) {
-    if(req.isAuthenticated()) {
-        return next();
-    }
-    console.log("User not logged in, redirecting")
-    res.redirect('/login');
-}
-function checkAuth(req, res, next) {
-    if(req.isAuthenticated()) {
-        console.log("User already logged in, redirecting")
-        res.redirect('/account');
-    }
-    return next();
-}
 
 
 app.listen(port);
