@@ -40,10 +40,14 @@ $('#add').on('click', function () {
     });
 })
 
-$("button.delete").onclick = function(event) {
-    event.stopPropagation(); // stop the button from inheriting parent's href
+$('input').change(function(){
+    $('#error-box').removeClass('show');
+});
+
+function delProxy() {
     subdomain = $(this).data("proxy-subdomain")
-    fetch('/addproxy',
+    console.log("w")
+    fetch('/delproxy',
     {
         method: 'POST',
         body: JSON.stringify({ subdomain: subdomain }),
@@ -55,11 +59,7 @@ $("button.delete").onclick = function(event) {
             if (JSON.parse(json).message == "Success") location.reload();
         });
     });
-};
-
-$('input').change(function(){
-    $('#error-box').removeClass('show');
-});
+}
 
 function showError(msg) {
     $('#error-box').html(msg).addClass('show');

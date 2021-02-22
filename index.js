@@ -164,7 +164,7 @@ app.post('/authenticated', function (req, res, next) {
 
 app.post('/listproxies', async function (req, res, next) {
     if (!req.user)
-        next(new Error("Not logged in"))
+        return next(new Error("Not logged in"))
     try{
         const client = await pool.connect()
         await client.query('BEGIN')
@@ -226,13 +226,13 @@ app.post('/addproxy', async function (req, res, next) {
 
 app.post('/delproxy', async function (req, res, next) {
     if (!req.user)
-        next(new Error("Not logged in"))
+        return next(new Error("Not logged in"))
     try{
         const client = await pool.connect();
         await client.query('BEGIN');
         await client.query(`SELECT * FROM proxies WHERE subdomain=$1`, [res.body.subdomain], (err, result) => {
             if (!result.rows[0]) return next(new Error('This doesn\'t exist anymore. Try refreshing.'));
-
+            console.log(res.body.subdomain)
             client.query(`DELETE FROM proxies WHERE subdomain=$1`, [res.body.subdomain], (err, result) => {
                 if(err){ console.log(err); }
                 else {
