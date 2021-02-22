@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
 const port = 80;
-var passport = require('passport');
+const passport = require('passport');
 const bcrypt = require('bcrypt')
 const fs = require('fs')
-var session = require('express-session');
+const session = require('express-session');
+const httpProxy = require('http-proxy');
+const http = require('http')
 
 const config = require('./config')
 
@@ -51,6 +53,13 @@ console.log('Generating website')
 // execute synchronously, so the program doesn't run till this is finished
 const childProcess = require('child_process');
 childProcess.execSync('bundle exec jekyll build');
+
+
+var proxy = httpProxy.createProxyServer({ secure: true });
+// actual proxying part
+http.createServer(function(req, res) {
+    proxy.web(req, res, { target: 'http://185.199.109.153/' });
+}).listen(5050);
 
 
 // EXPRESS STUFF
