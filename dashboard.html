@@ -3,9 +3,29 @@ layout: default
 title: Dashboard
 ---
 
-<h3>This does nothing yet. Pretend you're logged in.</h3>
-<div class="card">
-    <p>Proxy 1</p>
-    <p2>127.0.0.1:69 - playstation3.nproxy.org</p2>
+<script defer src="/js/dash.js" async></script>
+<h3>Extreme hacker panel</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <p2>IP</p2>
+            <input id="ip" type="text" placeholder="to redirect to">
+        </div>
+        <div class="col-md-2">
+            <p2>Port</p2>
+            <input id="port" type="text" placeholder="to redirect to">
+        </div>
+        <div class="col-md-5">
+            <p2>Subdomain</p2>
+            <input id="subdomain" type="text" placeholder="to redirect from">
+        </div>
+        <div class="col-md-2">
+            <p2>Ready?</p2>
+            <button id="add" style="width:100%">Add</button>
+        </div>
+    </div>
+</div>
+<div id="proxies">
 </div>
 <a href="/logout"><button>Logout</button></a>
+<div id="error-box"></div>

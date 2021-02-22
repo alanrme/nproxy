@@ -58,7 +58,7 @@ childProcess.execSync('bundle exec jekyll build');
 var proxy = httpProxy.createProxyServer({ secure: true });
 // actual proxying part
 http.createServer(function(req, res) {
-    proxy.web(req, res, { target: 'http://185.199.109.153/' });
+    proxy.web(req, res, { target: 'http://138.201.66.160/' });
 }).listen(5050);
 
 
@@ -91,18 +91,14 @@ app.use(function(req, res, next) { // makes urls not need .html at the end
 
 function checkNotAuth(req, res, next) {
     if(req.user) {
-        console.log("User logged in")
         return next();
     }
-    console.log("User not logged in, redirecting")
     res.redirect('/login');
 }
 function checkAuth(req, res, next) {
     if(req.user) {
-        console.log("User already logged in, redirecting")
         res.redirect('/dash');
     }
-    console.log("User logged in")
     return next();
 }
 
@@ -111,7 +107,9 @@ app.get('/', function(req, res){
     res.send('');
 });
 
-app.post('/join', checkAuth, async function (req, res, next) {
+app.post('/join', async function (req, res, next) {
+    if (!req.user)
+        next(new Error("Not logged in"))
     try{
         const client = await pool.connect()
         await client.query('BEGIN')
@@ -128,7 +126,7 @@ app.post('/join', checkAuth, async function (req, res, next) {
                     if(err){ console.log(err); }
                     else {
                         client.query('COMMIT');
-                        res.json({ message: "Created" });
+                        res.json({ message: "Success" });
                         return;
                     }
                 });
@@ -145,12 +143,6 @@ app.post('/login', passport.authenticate('local', {
     console.log(req.body.username)
 })
 
-app.post('/authenticated', function (req, res, next) {
-    // check if user is authenticated
-    if (req.user) res.send(true)
-    else res.send(false)
-});
-
 app.get('/logout', function(req, res){
     req.logOut();
     res.redirect('/');
@@ -162,6 +154,96 @@ app.get('/dash', checkNotAuth, function (req, res, next) {
 
 app.get('/login', checkAuth, function (req, res, next) {
     res.sendFile(publicdir+"/login-register.html")
+});
+
+app.post('/authenticated', function (req, res, next) {
+    // check if user is authenticated
+    if (req.user) res.send(true)
+    else res.send(false)
+});
+
+app.post('/listproxies', async function (req, res, next) {
+    if (!req.user)
+        next(new Error("Not logged in"))
+    try{
+        const client = await pool.connect()
+        await client.query('BEGIN')
+        await client.query(`SELECT * FROM proxies WHERE email=$1`, [req.user.email], function(err, result) {
+            proxies = [];
+            for (i in result.rows) {
+                proxies.push(result.rows[i])
+            }
+            res.send(proxies)
+        });
+        client.release();
+    } catch(e){throw(e)}
+});
+
+app.post('/addproxy', async function (req, res, next) {
+    if (!req.user)
+        next(new Error("Not logged in"))
+    try{
+        proxy = req.body;
+
+        splitIp = proxy.ip.split(".");
+        for (i in splitIp) {
+            if (isNaN(parseInt(splitIp[i])) || splitIp[i] > 255) return next(new Error("Invalid IP"))
+        }
+        if (isNaN(parseInt(proxy.port)) || proxy.port > 65535 || proxy.port < 1) return next(new Error("Invalid port"))
+        if (!/^[a-zA-Z]+$/.test(proxy.subdomain))
+            return next(new Error("Invalid subdomain (use alphabets only!)"))
+
+        const client = await pool.connect();
+        await client.query('BEGIN');
+        premium = "";
+        await client.query(`SELECT * FROM users WHERE email=$1`, [req.user.email], (err, res) => {
+            if (res.rows[0]) premium = res.rows[0].premium;
+        })
+        await client.query(`SELECT * FROM proxies WHERE email=$1`, [req.user.email], async function(err, result) {
+            if(result.rows[0] && !premium) {
+                next(new Error('You have used your 1 free proxy.'))
+            } else if(result.rows[9]) {
+                next(new Error('You have used your 10 total proxies.'))
+            } else {
+                await client.query(`SELECT * FROM proxies WHERE subdomain=$1`, [proxy.subdomain], (err, result) => {
+                    if (result.rows[0]) return next(new Error('This subdomain is taken!'));
+
+                    client.query(`INSERT INTO proxies (email, ip, port, subdomain) VALUES ($1, $2, $3, $4)`,
+                    [req.user.email, proxy.ip, proxy.port, proxy.subdomain], function(err, result) {
+                        if(err){ console.log(err); }
+                        else {
+                            client.query('COMMIT');
+                            res.json({ message: "Success" });
+                            return;
+                        }
+                    });
+                })
+            }
+        });
+        client.release();
+    } catch(e){throw(e)}
+});
+
+app.post('/delproxy', async function (req, res, next) {
+    if (!req.user)
+        next(new Error("Not logged in"))
+    try{
+        const client = await pool.connect();
+        await client.query('BEGIN');
+        await client.query(`SELECT * FROM proxies WHERE subdomain=$1`, [res.body.subdomain], (err, result) => {
+            if (!result.rows[0]) return next(new Error('This doesn\'t exist anymore. Try refreshing.'));
+
+            client.query(`DELETE FROM proxies WHERE subdomain=$1`, [res.body.subdomain], (err, result) => {
+                if(err){ console.log(err); }
+                else {
+                    client.query('COMMIT');
+                    res.json({ message: "Success" });
+                    return;
+                }
+            });
+        })
+        client.release();
+    } catch(e){throw(e)}
 });
 
 

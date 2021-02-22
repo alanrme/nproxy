@@ -314,12 +314,27 @@ div#error-box {
 
 
 div.card {
-    margin: 0.5em 0;
+    margin: 0.5em 2em 0.5em 0;
     padding: 0.5em 1em;
     background: #222;
     border-radius: 0;
+    border: none;
+    /*these 2 overwrite the color and underline from <a href>s*/
+    color: white;
+    text-decoration: none;
     p { margin-bottom: 0; }
     p2 { color: #ddd; }
+    a { color: inherit; }
+    .delete {
+        position: absolute;
+        background: #181818;
+        top: 0;
+        right: -2em;
+        padding: 0.5em;
+        height: 100%;
+        width: 2em;
+        &:hover { background: #ff0000; }
+    }
 }
 
 
