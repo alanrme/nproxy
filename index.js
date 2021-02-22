@@ -136,6 +136,12 @@ app.post('/login', passport.authenticate('local', {
     console.log(req.body.username)
 })
 
+app.post('/authenticated', function (req, res, next) {
+    // check if user is authenticated
+    if (req.user) res.send(true)
+    else res.send(false)
+});
+
 app.get('/logout', function(req, res){
     req.logOut();
     res.redirect('/');

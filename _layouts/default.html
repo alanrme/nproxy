@@ -14,7 +14,7 @@
     <div class="content"> 
         {{ content }}
     </div>
-
+    
     {% include footer.html %}
     
     <!-- MODALS BELOW -->
@@ -26,12 +26,20 @@
         <p3>Loader stuck? Disable jQuery blocking.</p3>
         <div id="loader">
             <svg id="loader-n" data-name="Layer 1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                <path class="cls-2" d="M768,612c0-141.38-114.62-256-256-256S256,470.62,256,612a254.83,254.83,0,0,0,40,137.46V612a216,216,0,1,1,432,0V749.46A254.83,254.83,0,0,0,768,612Z"/>
-                <polygon class="cls-2" points="296 612 296 884.64 276 864.64 256 884.64 256 612 296 612"/>
-                <polygon class="cls-2" points="768 955.5 768 612 728 612 728 749.46 728 976.34 768 955.5"/>
+                <defs>
+                    <style>
+                        .loader-n-shapes {
+                            stroke-miterlimit: 10;
+                            stroke-width: 15px;
+                        }
+                    </style>
+                </defs>
+                <path class="loader-n-shapes" d="M768,568.29c0-141.38-114.62-256-256-256s-256,114.62-256,256a254.84,254.84,0,0,0,40,137.46V568.29c0-119.3,96.71-216,216-216s216,96.7,216,216V705.75A254.84,254.84,0,0,0,768,568.29Z"/>
+                <polygon class="loader-n-shapes" points="296 568.29 296 840.93 276 820.93 256 840.93 256 568.29 296 568.29"/>
+                <path class="loader-n-shapes" d="M728,705.75V914.86a452.61,452.61,0,0,0,40-24.19V568.29H728Z"/>
             </svg>
             <svg id="loader-o" data-name="Layer 1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                <path class="cls-1" d="M512,40A472.13,472.13,0,0,1,695.71,946.92,472.13,472.13,0,0,1,328.29,77.08,468.83,468.83,0,0,1,512,40m0-40C229.23,0,0,229.23,0,512s229.23,512,512,512,512-229.23,512-512S794.77,0,512,0Z"/>
+                <path class="loader-o-shapes" d="M512,55A457.13,457.13,0,0,1,689.87,933.11,457.13,457.13,0,0,1,334.13,90.89,454.2,454.2,0,0,1,512,55m0-55C229.23,0,0,229.23,0,512s229.23,512,512,512,512-229.23,512-512S794.77,0,512,0Z"/>
             </svg>
         </div>
     </div>
@@ -41,7 +49,7 @@
             <a class="m-close"><i class="fas fa-times"></i> Close</a>
         </div>
     </div>
-
+    
     <!-- if JS off -->
     <noscript>
         <div style="background-color: #fff; z-index: 9999999999999999999999999; position: absolute; left:0;top:0">
@@ -49,7 +57,7 @@
                 You should enable JavaScript! This website relies on it.
             </h1>
         </div>
-
+        
     </noscript>
 </body>
 

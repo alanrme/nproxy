@@ -5,8 +5,8 @@
 /* Fonts */
 $font-stack: "Montserrat", "Helvetica", "Arial";
 
-$primary: #1ec1c7;
-$secondary: #4e44b0;
+$primary: #2e2290;
+$secondary: #9e66d0;
 
 html {
 	font-size: 13px;
@@ -100,7 +100,7 @@ p3 {
 	align-items: center;
 	justify-content: center;
 	text-align: center;
-	background: #2e2290;
+	background: $primary;
 }
 
 
@@ -230,6 +230,21 @@ nav.awake {
 	transform: translateY(0);
 	transition: transform 0.5s;
 }
+@-webkit-keyframes animatedgradient {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+@-moz-keyframes animatedgradient {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+@keyframes animatedgradient {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
 
 
 
@@ -298,6 +313,19 @@ div#error-box {
 
 
 
+div.card {
+    margin: 0.5em 0;
+    padding: 0.5em 1em;
+    background: #222;
+    border-radius: 0;
+    p { margin-bottom: 0; }
+    p2 { color: #ddd; }
+}
+
+
+
+
+
 .scrollup {
 	position: fixed;
 	display: none;
@@ -357,8 +385,11 @@ div#error-box {
         fill: white;
         svg {
             height: 30vh;
+            &#loader-n { stroke: white }
             &#loader-o {
+                transition: transform 0.3s ease-in;
                 margin-left: -30vh;
+                &.big { transform: scale(1.2); }
             }
         }
     }
@@ -425,7 +456,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
         transition: 0.3s
     }
     &:focus {
-        border-color: #2e2290;
+        border-color: $primary;
     }
 
     &.error {

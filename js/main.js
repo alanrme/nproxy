@@ -1,7 +1,7 @@
 // LOADER HIDE
 $(window).on("load", function() {
     $('#loader-bg').animate({opacity: 0}, 300, function () { $('#loader-bg').hide();} );
-    // fade out loader, then hide
+    $('#loader-o').addClass("big")
 })
 
 $(function(){
