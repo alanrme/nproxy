@@ -17,7 +17,7 @@ $('#signup').on('click', function () {
 $('#login').on('click', function () {
     user = $('#username').val()
     password = $('#password').val()
-    fetch('/authenticate',
+    fetch('/login',
         {
             method: 'POST',
             body: JSON.stringify({ username: user, password: password }),

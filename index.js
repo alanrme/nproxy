@@ -53,18 +53,9 @@ const childProcess = require('child_process');
 childProcess.execSync('bundle exec jekyll build');
 
 
-const publicdir = __dirname + '/_site';
 // EXPRESS STUFF
 // app.use
-app.use(function(req, res, next) { // makes urls not need .html at the end
-    if (req.path.indexOf('.') === -1) {
-        var file = publicdir + req.path + '.html';
-        fs.exists(file, function(exists) {
-            if (exists) req.url += '.html';
-            next();
-        });
-    } else next();
-});
+const publicdir = __dirname + '/_site';
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(publicdir));
@@ -78,6 +69,15 @@ app.use(session({
 })); // put above passport things cuz it breaks if it's not??
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(function(req, res, next) { // makes urls not need .html at the end
+    if (req.path.indexOf('.') === -1) {
+        var file = publicdir + req.path + '.html';
+        fs.exists(file, function(exists) {
+            if (exists) req.url += '.html';
+            next();
+        });
+    } else next();
+});
 
 
 function checkNotAuth(req, res, next) {
@@ -91,7 +91,7 @@ function checkNotAuth(req, res, next) {
 function checkAuth(req, res, next) {
     if(req.user) {
         console.log("User already logged in, redirecting")
-        res.redirect('/account');
+        res.redirect('/dash');
     }
     console.log("User logged in")
     return next();
@@ -122,23 +122,15 @@ app.post('/join', checkAuth, async function (req, res, next) {
                         res.json({ message: "Created" });
                         return;
                     }
-                });   
+                });
             }
         });
         client.release();
     } catch(e){throw(e)}
 });
 
-app.get('/account', checkNotAuth, function (req, res, next) {
-    res.render("account.html")
-});
-
-app.get('/login', checkAuth, function (req, res, next) {
-    res.render("login.html")
-});
-
-app.post('/authenticate', passport.authenticate('local', {
-    successRedirect: "/account",
+app.post('/login', passport.authenticate('local', {
+    successRedirect: "/dash",
     failureRedirect: "/login"
 }), (req, res, next) => {
     console.log(req.body.username)
@@ -147,6 +139,14 @@ app.post('/authenticate', passport.authenticate('local', {
 app.get('/logout', function(req, res){
     req.logOut();
     res.redirect('/');
+});
+
+app.get('/dash', checkNotAuth, function (req, res, next) {
+    res.sendFile(publicdir+"/dashboard.html")
+});
+
+app.get('/login', checkAuth, function (req, res, next) {
+    res.sendFile(publicdir+"/login-register.html")
 });
 
 
